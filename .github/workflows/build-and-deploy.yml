@@ -33,6 +33,7 @@ jobs:
         run: |
           pwd
           ls -al Componote-BE-Config/notification
+          cat resources/yaml/application-rabbitmq.yml
 
       - name: 디스크 공간 확보
         run: |
