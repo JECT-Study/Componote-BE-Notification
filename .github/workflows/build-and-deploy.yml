@@ -24,15 +24,14 @@ jobs:
           git submodule update --init --recursive
           git submodule update --remote
 
-      - name: 서브 모듈 디버깅
+      - name: 프로젝트 파일 확인
         run: |
           pwd
           ls -al
 
-      - name: 프로젝트 디버깅
+      - name: 서브 모듈 확인
         run: |
           pwd
-          ls -al
           ls -al Componote-BE-Config/notification
 
       - name: 디스크 공간 확보
