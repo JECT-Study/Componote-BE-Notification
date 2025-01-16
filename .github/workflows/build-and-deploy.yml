@@ -72,22 +72,24 @@ jobs:
     needs: build
 
     steps:
-      - name: SSH를 통해 EC2 배포
-        env:
-          SERVER_HOST: ${{ secrets.EC2_HOST }}
-          SERVER_USER: ${{ secrets.EC2_USER }}
-          SERVER_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
+      - name: EC2에 JAR 파일 전송 (SCP)
         run: |
-          echo "${SERVER_KEY}" > ec2-key.pem
-          chmod 600 ec2-key.pem
-          
-          scp -i ec2-key.pem build/libs/*.jar ${SERVER_USER}@${SERVER_HOST}:/home/${SERVER_USER}/app.jar
-          
-          ssh -i ec2-key.pem ${SERVER_USER}@${SERVER_HOST} <<EOF
-          # Stop the running application
-          if sudo systemctl is-active --quiet my-application.service; then
-              sudo systemctl stop my-application.service
-          fi
-          
-          sudo systemctl start my-application.service
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+          # EC2에 접속해 ~/app 디렉터리 생성
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "mkdir -p ~/app"
+
+          # app.jar를 ~/app/ 디렉터리로 복사
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa build/libs/*.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/app/
+
+      - name: EC2에서 JAR 파일 실행
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          cd ~/app
+          chmod +x componote-0.0.1-SNAPSHOT.jar
+          pkill -f 'java -jar' || true
+          nohup java -jar componote-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
+          tail -n 50 app.log
           EOF
