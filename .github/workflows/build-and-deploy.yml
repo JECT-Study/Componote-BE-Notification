@@ -15,6 +15,7 @@ jobs:
       - name: 서브 모듈 확인
         uses: actions/checkout@v3
         with:
+          token: ${{secrets.CONFIG_SUBMODULE_TOKEN}}
           submodules: recursive
 
       - name: JDK 설정
@@ -37,8 +38,7 @@ jobs:
         run: |
           ./gradlew clean build
 
-      # 생성된 JAR 파일 저장
-      - name: Archive artifacts
+      - name: 생성된 JAR 파일 저장
         uses: actions/upload-artifact@v3
         with:
           name: build-artifacts
