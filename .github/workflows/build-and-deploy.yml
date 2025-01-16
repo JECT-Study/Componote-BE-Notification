@@ -56,22 +56,16 @@ jobs:
       - name: Gradle 실행 권한 부여
         run: chmod +x gradlew
 
-      - name: 프로젝트 클린
-        run: ./gradlew clean --no-daemon
-
       - name: 프로젝트 빌드
-        run: ./gradlew build -x test --no-daemon --refresh-dependencies -Dorg.gradle.daemon=false
+        run: |
+          ./gradlew clean --no-daemon
+          ./gradlew build -x test --no-daemon --refresh-dependencies -Dorg.gradle.daemon=false
 
       - name: 생성된 JAR 파일 확인
         run: |
+          pwd
           ls -al build/libs
 
-      - name: 생성된 JAR 파일 저장
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-artifacts
-          path: |
-            **/build/libs/*.jar
   deploy:
     name: 배포
     runs-on: ubuntu-latest
@@ -87,7 +81,7 @@ jobs:
           echo "${SERVER_KEY}" > ec2-key.pem
           chmod 600 ec2-key.pem
           
-          scp -i ec2-key.pem **/build/libs/*.jar ${SERVER_USER}@${SERVER_HOST}:/home/${SERVER_USER}/app.jar
+          scp -i ec2-key.pem build/libs/*.jar ${SERVER_USER}@${SERVER_HOST}:/home/${SERVER_USER}/app.jar
           
           ssh -i ec2-key.pem ${SERVER_USER}@${SERVER_HOST} <<EOF
           # Stop the running application
