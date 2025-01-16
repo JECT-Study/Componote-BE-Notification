@@ -29,9 +29,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 
-	// notification 서브 프로젝트 의존성 추가
-	implementation project(':notification')
-
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -39,13 +36,11 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-sourceSets {
-	main {
-		resources {
-			srcDir 'resources' // 'resources' 디렉토리를 리소스 경로로 추가
-		}
-	}
+task copyResources(type: Copy) {
+	from file('Componote-BE-Config/notification/resources') // 서브모듈 리소스 경로
+	into file('src/main/resources') // 메인 프로젝트의 리소스 디렉토리로 복사
 }
+processResources.dependsOn(copyResources)
 
 tasks.named('test') {
 	useJUnitPlatform()
