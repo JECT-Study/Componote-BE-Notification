@@ -28,7 +28,6 @@ jobs:
         run: |
           pwd
           ls -al
-          ls -al Componote-BE-Config/notification
 
       - name: 프로젝트 디버깅
         run: |
