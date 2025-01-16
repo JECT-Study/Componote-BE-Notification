@@ -69,16 +69,11 @@ jobs:
           path: |
             **/build/libs/*.jar
   deploy:
-    name: EC2에 배포
+    name: 배포
     runs-on: ubuntu-latest
     needs: build
 
     steps:
-      - name: Repository 확인
-        uses: actions/checkout@v3
-        with:
-          submodules: recursive
-
       - name: SSH를 통해 EC2 배포
         env:
           SERVER_HOST: ${{ secrets.EC2_HOST }}
