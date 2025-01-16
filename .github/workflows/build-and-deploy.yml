@@ -65,22 +65,15 @@ jobs:
         run: |
           pwd
           ls -al build/libs
-
-  deploy:
-    name: 배포
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
       - name: EC2에 JAR 파일 전송 (SCP)
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          
+
           # JAR 파일 확인
           pwd
-          ls -al build/libs
+          ls -al
 
           # EC2에 접속해 ~/app 디렉터리 생성
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "mkdir -p ~/app"
