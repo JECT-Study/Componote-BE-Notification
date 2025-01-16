@@ -62,6 +62,10 @@ jobs:
       - name: 프로젝트 빌드
         run: ./gradlew build -x test --no-daemon --refresh-dependencies -Dorg.gradle.daemon=false
 
+      - name: 생성된 JAR 파일 확인
+        run: |
+          ls -al build/libs
+
       - name: 생성된 JAR 파일 저장
         uses: actions/upload-artifact@v3
         with:
