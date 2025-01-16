@@ -18,6 +18,12 @@ jobs:
           token: ${{secrets.CONFIG_SUBMODULE_TOKEN}}
           submodules: true
 
+      - name: 서브모듈 초기화 및 업데이트
+        run: |
+          git submodule sync
+          git submodule update --init --recursive
+          git submodule update --remote
+
       - name: 디스크 공간 확보
         run: |
           echo "Before cleanup:"
