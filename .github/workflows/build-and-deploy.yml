@@ -24,6 +24,13 @@ jobs:
           git submodule update --init --recursive
           git submodule update --remote
 
+      # 2. 디렉토리 디버깅
+      - name: 디렉토리 디버깅
+        run: |
+          pwd
+          ls -al
+          ls -al Componote-BE-Config/notification
+
       - name: 디스크 공간 확보
         run: |
           echo "Before cleanup:"
